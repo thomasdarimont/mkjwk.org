@@ -166,14 +166,14 @@ class MkJwk extends React.Component {
             this.selectTab(kty)(); // select tab
         }
 
-        const keysize = sp.get('keysize');
-        if (keysize) {
-            this.setSize({ target: { value: keysize } });
+        const size = sp.get('size');
+        if (size) {
+            this.setSize({ target: { value: size } });
         }
 
-        const keyuse = sp.get('keyuse');
-        if (keyuse) {
-            this.setUse({ target: { value: keyuse } });
+        const use = sp.get('use');
+        if (use) {
+            this.setUse({ target: { value: use } });
         }
 
         const alg = sp.get('alg');
@@ -181,14 +181,14 @@ class MkJwk extends React.Component {
             this.setAlg({ target: { value: alg } });
         }
 
-        const curve = sp.get('curve');
-        if (curve) {
-            this.setCrv({ target: { value: curve } });
+        const crv = sp.get('cve');
+        if (crv) {
+            this.setCrv({ target: { value: crv } });
         }
 
-        const keyid = sp.get('keyid');
-        if (keyid) {
-            this.setKid({ target: { value: keyid } });
+        const kid = sp.get('kid');
+        if (kid) {
+            this.setKid({ target: { value: kid } });
         }
 
         const x509 = sp.get('x509');
@@ -203,7 +203,7 @@ class MkJwk extends React.Component {
         const p = u.searchParams;
 
         // remove old key-related params but keep others (like lang)
-        ['kty', 'keysize', 'keyuse', 'alg', 'keyid', 'curve', 'x509'].forEach(name =>
+        ['kty', 'size', 'use', 'alg', 'kid', 'cve', 'x509'].forEach(name =>
             p.delete(name)
         );
 
@@ -213,27 +213,27 @@ class MkJwk extends React.Component {
         p.set('kty', kty);
 
         if (kty === 'rsa') {
-            if (size) p.set('keysize', size);
-            if (use)  p.set('keyuse', use);
+            if (size) p.set('size', size);
+            if (use)  p.set('use', use);
             if (alg)  p.set('alg', alg);
-            if (kid)  p.set('keyid', kid);
+            if (kid)  p.set('kid', kid);
             if (x509) p.set('x509', 'y'); // absence == false
         } else if (kty === 'ec') {
-            if (crv)  p.set('curve', crv);
-            if (use)  p.set('keyuse', use);
+            if (crv)  p.set('cve', crv);
+            if (use)  p.set('use', use);
             if (alg)  p.set('alg', alg);
-            if (kid)  p.set('keyid', kid);
+            if (kid)  p.set('kid', kid);
             if (x509) p.set('x509', 'y');
         } else if (kty === 'oct') {
-            if (size) p.set('keysize', size);
-            if (use)  p.set('keyuse', use);
+            if (size) p.set('size', size);
+            if (use)  p.set('use', use);
             if (alg)  p.set('alg', alg);
-            if (kid)  p.set('keyid', kid);
+            if (kid)  p.set('kid', kid);
         } else if (kty === 'okp') {
-            if (crv)  p.set('curve', crv);
-            if (use)  p.set('keyuse', use);
+            if (crv)  p.set('cve', crv);
+            if (use)  p.set('use', use);
             if (alg)  p.set('alg', alg);
-            if (kid)  p.set('keyid', kid);
+            if (kid)  p.set('kid', kid);
         }
 
         return u.toString();
