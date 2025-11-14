@@ -119,10 +119,20 @@ class MkJwk extends React.Component {
 	}
 	
 	copyToClipboard = (key) => () => {
-		if (this.state.keys[key]) {
-			navigator.clipboard.writeText(JSON.stringify(this.state.keys[key], null, 4));
-		}
-	}
+        if (!this.state.keys[key]) {
+            return;
+        }
+
+        const value = this.state.keys[key];
+        if (!value) return;
+        if (typeof value === 'string') {
+            // PEM / cert: copy as-is
+            navigator.clipboard.writeText(value);
+        } else {
+            // JSON objects: pretty-print
+            navigator.clipboard.writeText(JSON.stringify(value, null, 4));
+        }
+    }
 	
 	render() {
 		return (
