@@ -144,13 +144,100 @@ class MkJwk extends React.Component {
 				</Tabs>
 				<KeyProps kty={this.state.kty} crv={this.state.crv} size={this.state.size} use={this.state.use} kid={this.state.kid} alg={this.state.alg} gen={this.state.gen} x509={this.state.x509}
 					setSize={this.setSize} setUse={this.setUse} setAlg={this.setAlg} setCrv={this.setCrv} setKid={this.setKid} generate={this.generate} setGen={this.setGen} setx509={this.setx509} 
-					t={this.props.t} 
+					t={this.props.t} buildConfigUrl={this.buildConfigUrl}
 					/>
 				<KeyDisplay kty={this.state.kty} keys={this.state.keys} t={this.props.t} copyToClipboard={this.copyToClipboard} />
 			</Container>
 		</Section>
 		);
 	}
+
+    componentDidMount() {
+        this.applyConfigFromUrl();
+    }
+
+    applyConfigFromUrl = () => {
+        const url = new URL(window.location.href);
+        const sp = url.searchParams;
+
+        const kty = sp.get('kty');
+        const allowedKty = ['rsa', 'ec', 'oct', 'okp'];
+        if (kty && allowedKty.includes(kty)) {
+            this.selectTab(kty)(); // select tab
+        }
+
+        const keysize = sp.get('keysize');
+        if (keysize) {
+            this.setSize({ target: { value: keysize } });
+        }
+
+        const keyuse = sp.get('keyuse');
+        if (keyuse) {
+            this.setUse({ target: { value: keyuse } });
+        }
+
+        const alg = sp.get('alg');
+        if (alg) {
+            this.setAlg({ target: { value: alg } });
+        }
+
+        const curve = sp.get('curve');
+        if (curve) {
+            this.setCrv({ target: { value: curve } });
+        }
+
+        const keyid = sp.get('keyid');
+        if (keyid) {
+            this.setKid({ target: { value: keyid } });
+        }
+
+        const x509 = sp.get('x509');
+        if (x509) {
+            const enable = x509.toLowerCase() === 'y';
+            this.setx509({ target: { value: enable ? 'true' : 'false' } });
+        }
+    };
+
+    buildConfigUrl = () => {
+        const u = new URL(window.location.href);
+        const p = u.searchParams;
+
+        // remove old key-related params but keep others (like lang)
+        ['kty', 'keysize', 'keyuse', 'alg', 'keyid', 'curve', 'x509'].forEach(name =>
+            p.delete(name)
+        );
+
+        const { kty, size, use, alg, kid, crv, x509 } = this.state;
+
+        // always include kty
+        p.set('kty', kty);
+
+        if (kty === 'rsa') {
+            if (size) p.set('keysize', size);
+            if (use)  p.set('keyuse', use);
+            if (alg)  p.set('alg', alg);
+            if (kid)  p.set('keyid', kid);
+            if (x509) p.set('x509', 'y'); // absence == false
+        } else if (kty === 'ec') {
+            if (crv)  p.set('curve', crv);
+            if (use)  p.set('keyuse', use);
+            if (alg)  p.set('alg', alg);
+            if (kid)  p.set('keyid', kid);
+            if (x509) p.set('x509', 'y');
+        } else if (kty === 'oct') {
+            if (size) p.set('keysize', size);
+            if (use)  p.set('keyuse', use);
+            if (alg)  p.set('alg', alg);
+            if (kid)  p.set('keyid', kid);
+        } else if (kty === 'okp') {
+            if (crv)  p.set('curve', crv);
+            if (use)  p.set('keyuse', use);
+            if (alg)  p.set('alg', alg);
+            if (kid)  p.set('keyid', kid);
+        }
+
+        return u.toString();
+    };
 	
 }
 
@@ -257,6 +344,7 @@ const KeyProps = ({...props}) => {
 				</Columns.Column>
 				<Columns.Column>
 					<GenerateButton generate={props.generate} t={props.t} />
+                    <CopyLinkButton buildConfigUrl={props.buildConfigUrl} t={props.t} />
 				</Columns.Column>
 			</Columns>
 		);
@@ -306,6 +394,7 @@ const KeyProps = ({...props}) => {
 					</Columns.Column>
 					<Columns.Column>
 						<GenerateButton generate={props.generate} t={props.t} />
+                        <CopyLinkButton buildConfigUrl={props.buildConfigUrl} t={props.t} />
 					</Columns.Column>
 				</Columns>
 		);
@@ -338,6 +427,7 @@ const KeyProps = ({...props}) => {
 					<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 					<Columns.Column>
 						<GenerateButton generate={props.generate} t={props.t} />
+                        <CopyLinkButton buildConfigUrl={props.buildConfigUrl} t={props.t} />
 					</Columns.Column>
 				</Columns>
 		);
@@ -376,6 +466,7 @@ const KeyProps = ({...props}) => {
 					<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 					<Columns.Column>
 						<GenerateButton generate={props.generate} t={props.t} />
+                        <CopyLinkButton buildConfigUrl={props.buildConfigUrl} t={props.t} />
 					</Columns.Column>
 				</Columns>
 		);
@@ -411,6 +502,23 @@ const GenerateButton = ({...props}) => {
 		<Button onClick={props.generate} fullwidth color='primary' size='large'>{props.t('key_props.generate')}</Button>
 	);
 }
+
+const CopyLinkButton = ({ buildConfigUrl, t }) => {
+    return (
+        <Button
+            fullwidth
+            color="link"
+            size="small"
+            className="mt-2"
+            onClick={() => {
+                const url = buildConfigUrl();
+                navigator.clipboard.writeText(url);
+            }}
+        >
+            {t('key_props.copy_url')}
+        </Button>
+    );
+};
 
 const KeyDisplay = ({...props}) => {
 	const jwk = props.keys.jwk ? (
@@ -556,60 +664,6 @@ class LanguageSwitch extends React.Component {
 const urlObject = new URL(window.location);
 const lang = urlObject.searchParams.get('lang')
 
-let mkjwkInstance = null; // will hold MkJwk instance
-
-function applyConfigFromUrl() {
-    if (!mkjwkInstance) return;
-
-    const url = new URL(window.location.href);
-    const sp = url.searchParams;
-
-    // 1) key type (tab)
-    const kty = sp.get('kty');
-    const allowedKty = ['rsa', 'ec', 'oct', 'okp'];
-    if (kty && allowedKty.includes(kty)) {
-        // selectTab returns a function
-        mkjwkInstance.selectTab(kty)();
-    }
-
-    // 2) RSA / oct: keysize
-    const keysize = sp.get('keysize');
-    if (keysize) {
-        mkjwkInstance.setSize({ target: { value: keysize } });
-    }
-
-    // 3) RSA / EC / oct / OKP: keyuse
-    const keyuse = sp.get('keyuse');
-    if (keyuse) {
-        mkjwkInstance.setUse({ target: { value: keyuse } });
-    }
-
-    // 4) RSA / EC / oct / OKP: alg
-    const alg = sp.get('alg');
-    if (alg) {
-        mkjwkInstance.setAlg({ target: { value: alg } });
-    }
-
-    // 5) EC / OKP: curve
-    const curve = sp.get('curve');
-    if (curve) {
-        mkjwkInstance.setCrv({ target: { value: curve } });
-    }
-
-    // 6) all: keyid
-    const keyid = sp.get('keyid');
-    if (keyid) {
-        mkjwkInstance.setKid({ target: { value: keyid } });
-    }
-
-    // 7) RSA / EC: x509 (enable if x509=y)
-    const x509 = sp.get('x509');
-    if (x509) {
-        const enable = x509.toLowerCase() === 'y';
-        mkjwkInstance.setx509({ target: { value: enable ? 'true' : 'false' } });
-    }
-}
-
 ReactDOM.render((
 	<LanguageSwitch lang={lang} />
 	),
@@ -618,18 +672,9 @@ ReactDOM.render((
 
 ReactDOM.render(
     <Translation i18n={i18n}>
-        {(t, { i18n }) => (
-            <MkJwk
-                t={t}
-                ref={c => { mkjwkInstance = c; }}
-            />
-        )}
+        {(t, { i18n }) => <MkJwk t={t} />}
     </Translation>,
-    document.getElementById('react'),
-    () => {
-        // called after initial mount
-        applyConfigFromUrl(mkjwkInstance);
-    }
+    document.getElementById('react')
 );
 
 ReactDOM.render((
