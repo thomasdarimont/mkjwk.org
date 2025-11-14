@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { Button, Tabs, Container, Section, Level, Form, Columns, Content } from 'react-bulma-components';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import i18n from './i18n';
-import { useTranslation } from 'react-i18next';
 import { Translation } from 'react-i18next';
 
 
@@ -87,15 +86,15 @@ class MkJwk extends React.Component {
 		this.appendParam(url, 'kid', this.state.kid);
 		this.appendParam(url, 'gen', this.state.gen);
 
-		if (this.state.kty == 'rsa' || this.state.kty == 'ec') {
+		if (this.state.kty === 'rsa' || this.state.kty === 'ec') {
 			this.appendParam(url, 'x509', this.state.x509);
 		}
 		
-		if (this.state.kty == 'rsa' || this.state.kty == 'oct') {
+		if (this.state.kty === 'rsa' || this.state.kty === 'oct') {
 			this.appendParam(url, 'size', this.state.size);
 		}
 		
-		if (this.state.kty == 'ec' || this.state.kty == 'okp') {
+		if (this.state.kty === 'ec' || this.state.kty === 'okp') {
 			
 			if (!this.state.crv) {
 				alert(this.props.t('curve_required'));
@@ -130,16 +129,16 @@ class MkJwk extends React.Component {
 		<Section>
 			<Container>
 				<Tabs type='boxed'>
-					<Tabs.Tab active={this.state.kty == 'rsa'} onClick={this.selectTab('rsa')}>
+					<Tabs.Tab active={this.state.kty === 'rsa'} onClick={this.selectTab('rsa')}>
 					{this.props.t('tabs.rsa')}
 					</Tabs.Tab>
-					<Tabs.Tab active={this.state.kty == 'ec'} onClick={this.selectTab('ec')}>
+					<Tabs.Tab active={this.state.kty === 'ec'} onClick={this.selectTab('ec')}>
 					{this.props.t('tabs.ec')}
 					</Tabs.Tab>
-					<Tabs.Tab active={this.state.kty == 'oct'} onClick={this.selectTab('oct')}>
+					<Tabs.Tab active={this.state.kty === 'oct'} onClick={this.selectTab('oct')}>
 					{this.props.t('tabs.oct')}
 					</Tabs.Tab>
-					<Tabs.Tab active={this.state.kty == 'okp'} onClick={this.selectTab('okp')}>
+					<Tabs.Tab active={this.state.kty === 'okp'} onClick={this.selectTab('okp')}>
 					{this.props.t('tabs.okp')}
 					</Tabs.Tab>
 				</Tabs>
@@ -218,7 +217,7 @@ const keyToAlg = (kty, use) => {
 
 
 const KeyProps = ({...props}) => {
-	if (props.kty == 'rsa') {
+	if (props.kty === 'rsa') {
 		return (
 			<Columns>
 				<Columns.Column>
@@ -261,7 +260,7 @@ const KeyProps = ({...props}) => {
 				</Columns.Column>
 			</Columns>
 		);
-	} else if (props.kty == 'ec') {
+	} else if (props.kty === 'ec') {
 		return (
 				<Columns>
 					<Columns.Column>
@@ -310,7 +309,7 @@ const KeyProps = ({...props}) => {
 					</Columns.Column>
 				</Columns>
 		);
-	} else if (props.kty == 'oct') {
+	} else if (props.kty === 'oct') {
 		return (
 				<Columns>
 					<Columns.Column>
@@ -342,7 +341,7 @@ const KeyProps = ({...props}) => {
 					</Columns.Column>
 				</Columns>
 		);
-	} else if (props.kty == 'okp') {
+	} else if (props.kty === 'okp') {
 		return (
 				<Columns>
 					<Columns.Column>
@@ -397,7 +396,7 @@ const KeyIdSelector = ({...props}) => {
 						<option value='timestamp'>{props.t('key_props.gen.timestamp')}</option>
 					</Form.Select>
 				</Form.Control>
-				{ props.gen == 'specified' && (
+				{ props.gen === 'specified' && (
 					<Form.Control fullwidth>
 						<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
 					</Form.Control>
@@ -527,7 +526,7 @@ class LanguageSwitch extends React.Component {
 	
 	selectTab = (lang) => () => {
 		// short circuit out if it's not changing
-		if (lang == this.state.language) {
+		if (lang === this.state.language) {
 			return;
 		}
 		
@@ -543,10 +542,10 @@ class LanguageSwitch extends React.Component {
 	render = () => {
 		return (
 			<Tabs type='toggle' className='has-background-dark'>
-				<Tabs.Tab active={this.state.language == 'en'} onClick={this.selectTab('en')}>
+				<Tabs.Tab active={this.state.language === 'en'} onClick={this.selectTab('en')}>
 				English
 				</Tabs.Tab>
-				<Tabs.Tab active={this.state.language == 'ja'} onClick={this.selectTab('ja')}>
+				<Tabs.Tab active={this.state.language === 'ja'} onClick={this.selectTab('ja')}>
 				日本語
 			</Tabs.Tab>
 	</Tabs>
@@ -559,7 +558,7 @@ const lang = urlObject.searchParams.get('lang')
 
 ReactDOM.render((
 	<LanguageSwitch lang={lang} />
-	), 
+	),
 	document.getElementById('languageSwitch')
 );
 
