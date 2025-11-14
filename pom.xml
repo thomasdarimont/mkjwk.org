@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.1.RELEASE</version>
+		<version>3.5.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -43,7 +43,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<start-class>edu.mit.mkjwk.MkJwk</start-class>
-		<java.version>14</java.version>
+		<java.version>21</java.version>
 	</properties>
 
 	<build>
@@ -55,7 +55,7 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.8.0</version>
+				<version>1.15.4</version>
 				<configuration>
 					<installDirectory>target</installDirectory>
 				</configuration>
@@ -102,7 +102,7 @@
 									<pluginExecutionFilter>
 										<groupId>com.github.eirslett</groupId>
 										<artifactId>frontend-maven-plugin</artifactId>
-										<versionRange>1.8.0</versionRange>
+										<versionRange>1.15.4</versionRange>
 										<goals>
 											<goal>npm</goal>
 											<goal>bower</goal>
