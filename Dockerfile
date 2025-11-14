@@ -5,7 +5,7 @@ WORKDIR /build
 ADD . /build
 RUN mvn -Dmaven.test.skip=true -Dmaven.javadoc.skip=true package
 
-FROM openjdk:21.0.9_10-jre-ubi10-minimal
+FROM eclipse-temurin:21.0.9_10-jre-ubi10-minimal
 
 COPY --from=builder /build/target/ROOT.war /app.jar
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
