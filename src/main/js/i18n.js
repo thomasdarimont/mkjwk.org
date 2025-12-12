@@ -17,7 +17,7 @@ const resources = {
 					okp: 'OKP'
 				},
 				key_props: {
-					copy_url: "Copy URL",
+					copy_url: "Copy Configuration URL",
 					generate: 'Generate',
 					size: 'Key Size',
 					use: 'Key Use',
